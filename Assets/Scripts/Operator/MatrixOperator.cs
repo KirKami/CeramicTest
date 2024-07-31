@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+
+using Cysharp.Threading.Tasks;
+
 using TMPro;
 using UnityEngine;
 
@@ -34,7 +37,8 @@ public class MatrixOperator : MonoBehaviour
             offsets.Add((Vector3)transformMatrix.GetColumn(3));
         }
 
-        modelBuilder.matrixPrimitives[matrixIndex].StartTranslationSequence(modelMatrix, offsets);
+        //modelBuilder.matrixPrimitives[matrixIndex].StartTranslationSequence(modelMatrix, offsets);
+        modelBuilder.matrixPrimitives[matrixIndex].StartTranslationSequence(modelMatrix, spaceBuilder.matrixList.ToArray(),matrixIndex);
     }
     /// <summary>
     /// Find possible offset vectors of matrix among space matrices. Uses input data from UI.
@@ -60,5 +64,18 @@ public class MatrixOperator : MonoBehaviour
         {
             throw new ArgumentException("Invalid matrix index exception");
         }
+    }
+    public void FindAllOffsetVectors()
+    {
+        for (int i = 0; i < modelBuilder.matrixList.Count; i++)
+        {
+            FindOffsetVectors(i);
+        }
+    }
+    public void RunTest()
+    {
+        modelBuilder.BuildMatricesFromAssetFile(modelBuilder.jsonFile);
+        spaceBuilder.BuildMatricesFromAssetFile(spaceBuilder.jsonFile);
+        FindAllOffsetVectors();
     }
 }

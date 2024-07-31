@@ -10,6 +10,7 @@ public class MatrixBuilder : MonoBehaviour
     public List<MatrixVisualInstance> matrixPrimitives = new List<MatrixVisualInstance>();
 
     public Color matrixVisualizationColor = Color.white;
+    public TextAsset jsonFile;
 
     /// <summary>
     /// Use a JSON-asset with values to create matrices. File must be based on <see cref="MatrixFormat"/>.

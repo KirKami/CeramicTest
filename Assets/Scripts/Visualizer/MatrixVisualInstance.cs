@@ -11,7 +11,7 @@ public class MatrixVisualInstance : MonoBehaviour
     public Renderer objectRenderer;
 
     //Animation Sequence
-    public static Sequence translationSequence;
+    public Sequence translationSequence;
 
     /// <summary>
     /// Dynamically creates new graphical instance of matrix object
@@ -57,9 +57,34 @@ public class MatrixVisualInstance : MonoBehaviour
         {
             //Calculate resulting position in world space
             Vector3 resultPosition = matrix.GetPosition() + offset;
-            //Add command to move cube to this position in 1 second
+            //Add command to move cube to this position in 1 second and wait for 1 second
             translationSequence.Append(transform.DOMove(resultPosition, 1f));
+            translationSequence.AppendInterval(1f);
         }
+        //Start sequence
+        translationSequence.Play();
+    }
+    public void StartTranslationSequence(Matrix4x4 matrix, Matrix4x4[] spaceMatrices, int matrixIndexOffset)
+    {
+        //Kill existing animation sequence
+        if (translationSequence != null) translationSequence.Kill();
+
+        //Reset position to base
+        transform.position = matrix.GetPosition();
+
+        //Initialize new sequence
+        translationSequence = DOTween.Sequence();
+
+        foreach (var item in spaceMatrices)
+        {
+            translationSequence.Append(transform.DOMove(item.GetPosition(), 1f));
+            translationSequence.Join(transform.DORotate(item.rotation.eulerAngles, 1f));
+            translationSequence.Join(transform.DOScale(item.lossyScale, 1f));
+            translationSequence.AppendInterval(1f);
+        }
+
+        translationSequence.Goto(matrixIndexOffset * 2);
+
         //Start sequence
         translationSequence.Play();
     }
